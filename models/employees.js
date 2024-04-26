@@ -10,6 +10,9 @@ const employeeSchema=new mongoose.Schema({
     Position:{
         type:String,
     },
+    Salary:{
+        type:String,
+    },
     JoiningDate:{
         type:String
     },
