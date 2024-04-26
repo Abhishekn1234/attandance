@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 // MongoDB connection URI
-const mongoURI = "mongodb://localhost:27017/User";
+const mongoURI = "mongodb://0.0.0.0:27017/User";
 
 // Options to pass to MongoDB driver during connection
 const options = {
