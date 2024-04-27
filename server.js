@@ -3,12 +3,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const employeeRoutes = require("./routes/employees");
+const attendanceRoutes = require("./routes/attandance")
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 // MongoDB connection URI
-const mongoURI = "mongodb://localhost:27017/User";
+const mongoURI = "mongodb://0.0.0.0:27017/User";
 
 // Options to pass to MongoDB driver during connection
 const options = {
@@ -30,6 +31,7 @@ mongoose.connect(mongoURI, options)
 // Define routes
 app.use("", userRoutes);
 app.use("", employeeRoutes);
+app.use("", attendanceRoutes);
 const PORT = 3000;
 
 app.listen(PORT, () => {
