@@ -1,9 +1,125 @@
 const express = require("express");
 const router = express.Router();
 const Employee = require("../models/employees"); 
+const bcrypt=require("bcrypt");
+const isAdmin = async (req, res, next) => {
+    try {
+        if (!req.user.isAdmin) { // Assuming isAdmin is a boolean field in the req.user object
+            return res.status(403).json({ message: "Unauthorized access" });
+        }
+        next();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+router.post("/employee-register", async (req, res) => {
+    try {
+        const { username, password, email, Position, Department, Name } = req.body;
+
+        // Check if the username already exists
+        const existingUsername = await Employee.findOne({ username });
+        if (existingUsername) {
+            return res.status(400).json({ message: "Username already exists" });
+        }
+
+        // Check if the email already exists
+        const existingEmail = await Employee.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        // Create a new employee
+        const newEmployee = new Employee({
+            username,
+            password,
+            email,
+            Position,
+            Department,
+            Name
+        });
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        newEmployee.password = hashedPassword;
+
+        // Save the new employee
+        await newEmployee.save();
+
+        res.status(201).json({ message: "Employee registered successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 
-router.put('/employees/:id', async (req, res) => {
+// Route for employee login
+// POST route for employee login
+router.post("/employee-login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if the employee with the provided email exists
+        const employee = await Employee.findOne({ email });
+        if (!employee) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        // Check if the provided password is correct
+        const isPasswordValid = await bcrypt.compare(password, employee.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        // Password is correct, employee is authenticated
+        const { _id, username, Name, Position, Department } = employee;
+        res.status(200).json({ 
+            message: "Login successful",
+            employee: { _id, username, Name, Position, Department}
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// POST route for updating employee details
+router.post("/update-employee-details/:id", async (req, res) => {
+    try {
+        const { Position, Department, Name } = req.body;
+
+        // Find the employee by ID and update their details
+        const updatedEmployee = await Employee.findByIdAndUpdate(
+            req.params.id,
+            { Position, Department, Name },
+            { new: true }
+        );
+
+        res.status(200).json({ message: "Employee details updated successfully", updatedEmployee });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+router.get("/employee-details/:id", async (req, res) => {
+    try {
+        const employee = await Employee.findById(req.params.id);
+        if (!employee) {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+
+        res.status(200).json({ message: "Employee details retrieved successfully", employee });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+
+router.put('/employees/:id',isAdmin, async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedEmployee);
@@ -13,7 +129,7 @@ router.put('/employees/:id', async (req, res) => {
 });
 
 
-router.delete('/employees/:id', async (req, res) => {
+router.delete('/employees/:id',isAdmin, async (req, res) => {
     try {
         const deletedEmployee = await Employee.findByIdAndDelete(req.params.id);
         res.json(deletedEmployee);
@@ -23,7 +139,7 @@ router.delete('/employees/:id', async (req, res) => {
 });
 
 
-router.patch('/employees/:id', async (req, res) => {
+router.patch('/employees/:id',isAdmin, async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedEmployee);
@@ -31,10 +147,7 @@ router.patch('/employees/:id', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
-
-///
-// Post
-router.post('/employees', async (req, res) => {
+router.post('/employees', isAdmin,async (req, res) => {
     const { Name, Department, Position, JoiningDate, Project, Salary } = req.body;
     const employee = new Employee({Name, Department, Position, JoiningDate, Project, Salary });
     try {

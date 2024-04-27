@@ -3,12 +3,18 @@ const mongoose=require("mongoose");
 const attandanceSchema=new mongoose.Schema({
     Name:{
         type:String,
+        ref:'Employee'
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Reference to the User model
+        required: true
     },
     checkInTime:{
-        type:String,
+        type:Date,
     },
     checkOutTime:{
-        type:String,
+        type:Date,
     },
     WorkingHours:{
         type:Number

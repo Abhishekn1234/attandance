@@ -10,10 +10,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true // password is required
     },
+    isAdmin: {
+        type: Boolean,
+        default: false // Default value is false for regular users
+    },
     email: {
         type: String,
         required: true, // email is required
         unique: true // email should be unique
+    },
+    employee: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employee' // Reference to the Employee model
     },
     otp:{
         type:Number
