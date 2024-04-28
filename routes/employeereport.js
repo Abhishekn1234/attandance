@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const Attendance = require("../models/attandance");
-
-const { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfDay, endOfDay } = require('date-fns');
+const moment = require("moment");
 
 router.get("/monthly-report", async (req, res) => {
     try {
@@ -15,9 +14,11 @@ router.get("/monthly-report", async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Retrieve attendance records for the user for the specified month and year
-        const startDate = startOfMonth(new Date(year, month - 1, 1));
-        const endDate = endOfMonth(new Date(year, month - 1, 1));
+        // Calculate start and end dates for the specified month using moment.js
+        const startDate = moment({ year, month: month - 1 }).startOf('month').toDate();
+        const endDate = moment({ year, month: month - 1 }).endOf('month').toDate();
+
+        // Retrieve attendance records for the user for the specified month
         const attendanceRecords = await getAttendanceRecords(user._id, startDate, endDate);
 
         // Calculate total working hours for the month
@@ -50,9 +51,11 @@ router.get("/weekly-report", async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Retrieve attendance records for the user for the specified week and year
-        const startDate = startOfWeek(new Date(year, 0, 1));
-        const endDate = endOfWeek(new Date(year, 0, 1));
+        // Calculate start and end dates for the specified week using moment.js
+        const startDate = moment({ year }).isoWeek(week).startOf('isoWeek').toDate();
+        const endDate = moment({ year }).isoWeek(week).endOf('isoWeek').toDate();
+
+        // Retrieve attendance records for the user for the specified week
         const attendanceRecords = await getAttendanceRecords(user._id, startDate, endDate);
 
         // Calculate total working hours for the week
@@ -85,9 +88,11 @@ router.get("/daily-report", async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        // Calculate start and end dates for the specified day using moment.js
+        const startDate = moment({ year, month: month - 1, day }).startOf('day').toDate();
+        const endDate = moment({ year, month: month - 1, day }).endOf('day').toDate();
+
         // Retrieve attendance records for the user for the specified day
-        const startDate = startOfDay(new Date(year, month - 1, day));
-        const endDate = endOfDay(new Date(year, month - 1, day));
         const attendanceRecords = await getAttendanceRecords(user._id, startDate, endDate);
 
         // Calculate total working hours for the day
@@ -111,27 +116,19 @@ router.get("/daily-report", async (req, res) => {
     }
 });
 
-// Function to retrieve attendance records for the specified user and date range
-// Function to retrieve attendance records for the specified user and date range
 async function getAttendanceRecords(userId, startDate, endDate) {
     try {
-        // Ensure startDate and endDate are valid Date objects
-        if (!(startDate instanceof Date && !isNaN(startDate.valueOf())) || 
-            !(endDate instanceof Date && !isNaN(endDate.valueOf()))) {
-            throw new Error("Invalid date range");
-        }
-
+        // Retrieve attendance records for the specified date range
         return await Attendance.find({
             userId: userId,
-            checkInTime: { $gte: startDate, $lt: endDate }
+            checkInTime: { $gte: startDate, $lte: endDate }
         });
     } catch (error) {
         console.error("Error retrieving attendance records:", error);
-        throw error; // Rethrow the error to be handled in the route handler
+        throw error;
     }
 }
 
-// Function to calculate total working hours from attendance records
 function calculateTotalWorkingHours(attendanceRecords) {
     let totalWorkingHours = 0;
     attendanceRecords.forEach(record => {
