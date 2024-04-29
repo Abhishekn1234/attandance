@@ -4,7 +4,7 @@ const Employee = require("../models/employees");
 const bcrypt=require("bcrypt");
 const isAdmin = async (req, res, next) => {
     try {
-        if (!req.user.isAdmin) { // Assuming isAdmin is a boolean field in the req.user object
+        if (!req.user.isAdmin) { 
             return res.status(403).json({ message: "Unauthorized access" });
         }
         next();
@@ -17,19 +17,19 @@ router.post("/employee-register", async (req, res) => {
     try {
         const { username, password, email, Position, Department, Name } = req.body;
 
-        // Check if the username already exists
+       
         const existingUsername = await Employee.findOne({ username });
         if (existingUsername) {
             return res.status(400).json({ message: "Username already exists" });
         }
 
-        // Check if the email already exists
+        
         const existingEmail = await Employee.findOne({ email });
         if (existingEmail) {
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        // Create a new employee
+       
         const newEmployee = new Employee({
             username,
             password,
@@ -39,12 +39,12 @@ router.post("/employee-register", async (req, res) => {
             Name
         });
 
-        // Hash the password
+       
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         newEmployee.password = hashedPassword;
 
-        // Save the new employee
+        
         await newEmployee.save();
 
         res.status(201).json({ message: "Employee registered successfully" });
@@ -55,13 +55,12 @@ router.post("/employee-register", async (req, res) => {
 });
 
 
-// Route for employee login
-// POST route for employee login
+
 router.post("/employee-login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if the employee with the provided email exists
+        
         const employee = await Employee.findOne({ email });
         if (!employee) {
             return res.status(400).json({ message: "Invalid email or password" });
@@ -73,7 +72,7 @@ router.post("/employee-login", async (req, res) => {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
-        // Password is correct, employee is authenticated
+      
         const { _id, username, Name, Position, Department } = employee;
         res.status(200).json({ 
             message: "Login successful",
@@ -85,12 +84,11 @@ router.post("/employee-login", async (req, res) => {
     }
 });
 
-// POST route for updating employee details
+
 router.post("/update-employee-details/:id", async (req, res) => {
     try {
         const { Position, Department, Name } = req.body;
 
-        // Find the employee by ID and update their details
         const updatedEmployee = await Employee.findByIdAndUpdate(
             req.params.id,
             { Position, Department, Name },
@@ -158,7 +156,7 @@ router.post('/employees', isAdmin,async (req, res) => {
     }
   });
 
-// Get all employees
+
 router.get('/employees', async (req, res) => {
     try {
       const employees = await Employee.find();
@@ -168,7 +166,7 @@ router.get('/employees', async (req, res) => {
     }
   });
   
-//  employee by ID
+
 router.get('/employees/:id', async (req, res) => {
     try {
       const employee = await Employee.findById(req.params.id);
