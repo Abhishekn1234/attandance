@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Employee = require("../models/employees"); 
+const { Employee } = require("../models/employees"); 
 const bcrypt=require("bcrypt");
 const isAdmin = async (req, res, next) => {
     try {
