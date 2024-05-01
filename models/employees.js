@@ -71,7 +71,7 @@ const employeeSchema = new mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
-        default: false // Default value is false for regular users
+        default: false,
     },
     attendance: [attendanceSchema]
 });

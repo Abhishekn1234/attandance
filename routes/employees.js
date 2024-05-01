@@ -1,21 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const Employee = require("../models/employees"); 
+const {Employee} = require("../models/employees"); 
 const bcrypt=require("bcrypt");
-const isAdmin = async (req, res, next) => {
+const isAdmin = require('../middleware/isAdmin');
+const verifyToken = require("../middleware/verifytoken");
+// const isAdmin = async (req, res, next) => {
+//     try {
+//         if (!req.user.isAdmin) { 
+//             return res.status(403).json({ message: "Unauthorized access" });
+//         }
+//         next();
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// };
+
+router.post("/employee-register", verifyToken, async (req, res) => {
     try {
-        if (!req.user.isAdmin) { 
-            return res.status(403).json({ message: "Unauthorized access" });
-        }
-        next();
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-router.post("/employee-register", async (req, res) => {
-    try {
-        const { username, password, email, Position, Department, Name } = req.body;
+        const { username, password, email, Position, Department, Name} = req.body;
 
        
         const existingUsername = await Employee.findOne({ username });
@@ -85,7 +88,7 @@ router.post("/employee-login", async (req, res) => {
 });
 
 
-router.post("/update-employee-details/:id", async (req, res) => {
+router.patch("/update-employee-details/:id",async (req, res) => {
     try {
         const { Position, Department, Name } = req.body;
 
@@ -116,7 +119,7 @@ router.get("/employee-details/:id", async (req, res) => {
 });
 
 
-
+////////////////////////////////////////////////////////////////
 router.put('/employees/:id',isAdmin, async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
