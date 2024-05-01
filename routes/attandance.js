@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {Attendance} = require("../models/employees");
-const {Employee} = require("../models/employees");
+const { Employee } = require("../models/employees");
 
 
 router.post("/attendance", async (req, res) => {
@@ -51,10 +51,11 @@ router.put("/attendance/:id", async (req, res) => {
         // Validate time format
         const checkInTimeString = attendanceRecord.checkInTime;
         const checkOutTimeString = attendanceRecord.checkOutTime;
+        console.log(checkInTimeString,checkOutTimeString);
         if (!isValidTimeFormat(checkInTimeString) || !isValidTimeFormat(checkOutTimeString)) {
             return res.status(400).json({ message: "Invalid checkInTime or checkOutTime format" });
         }
-
+      
         // Calculate working hours
         const workingHours = calculateWorkingHours(checkInTimeString, checkOutTimeString);
 

@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const {Employee} = require("../models/employees"); 
+
+
+const { Employee } = require("../models/employees"); 
+
 const bcrypt=require("bcrypt");
 const isAdmin = require('../middleware/isAdmin');
 const verifyToken = require("../middleware/verifytoken");
