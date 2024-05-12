@@ -79,7 +79,7 @@ router.post("/forgot-password", async (req, res) => {
 });
 
 router.post("/reset-password", async (req, res) => {
-    try {
+try {
         const { email, otp: otpString, newPassword, confirmPassword } = req.body;
         const otp = parseInt(otpString);
         console.log(otp);
