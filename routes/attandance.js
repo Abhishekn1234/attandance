@@ -62,7 +62,7 @@ router.put("/attendance/:id", async (req, res) => {
         // Assign the calculated working hours to the attendance record
         attendanceRecord.WorkingHours = workingHours;
 
-        // Save the updated attendance record
+      
         await attendanceRecord.save();
 
         res.json(attendanceRecord);
