@@ -19,7 +19,7 @@ const options = {
   useUnifiedTopology: true,
 };
 
-// Connect to MongoDB using mongoose.connect
+
 mongoose
   .connect(mongoURI, options)
   .then(() => {
