@@ -40,7 +40,6 @@ router.get("/monthly-report", async (req, res) => {
         const checkInCount = await Attendance.countDocuments({ Name, checkInTime: { $exists: true }});
         const checkOutCount = await Attendance.countDocuments({ Name, checkOutTime: { $exists: true } });
 
-        // Calculate total days in the month
         const totalDays = new Date(year, month, 0).getDate();
 
         // Calculate percentages

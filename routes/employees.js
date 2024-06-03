@@ -8,11 +8,7 @@ const bcrypt=require("bcrypt");
 const isAdmin = require('../middleware/isAdmin');
 const verifyToken = require("../middleware/verifytoken");
 // const isAdmin = async (req, res, next) => {
-//     try {
-//         if (!req.user.isAdmin) { 
-//             return res.status(403).json({ message: "Unauthorized access" });
-//         }
-//         next();
+//    
 //     } catch (error) {
 //         console.error(error);
 //         res.status(500).json({ message: "Internal server error" });
