@@ -68,7 +68,6 @@ router.post("/employee-login", async (req, res) => {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
-        // Check if the provided password is correct
         const isPasswordValid = await bcrypt.compare(password, employee.password);
         if (!isPasswordValid) {
             return res.status(400).json({ message: "Invalid email or password" });
