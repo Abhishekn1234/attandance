@@ -48,7 +48,7 @@ router.put("/attendance/:id", async (req, res) => {
         const formattedTime = `${currentTime.getHours()}:${String(currentTime.getMinutes())}:${String(currentTime.getSeconds())}`;
         attendanceRecord.checkOutTime = formattedTime;
 
-        // Validate time format
+      
         const checkInTimeString = attendanceRecord.checkInTime;
         const checkOutTimeString = attendanceRecord.checkOutTime;
         console.log(checkInTimeString,checkOutTimeString);
