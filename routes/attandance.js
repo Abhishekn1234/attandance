@@ -44,7 +44,7 @@ router.put("/attendance/:id", async (req, res) => {
             return res.status(404).json({ message: "Attendance record not found" });
         }
 
-        // Update attendance record with check-out time
+        // Update attendance record with check-out ti
         const formattedTime = `${currentTime.getHours()}:${String(currentTime.getMinutes())}:${String(currentTime.getSeconds())}`;
         attendanceRecord.checkOutTime = formattedTime;
 
