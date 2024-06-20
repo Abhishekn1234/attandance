@@ -37,7 +37,7 @@ router.put("/attendance/:id", async (req, res) => {
         const attendanceId = req.params.id;
         const currentTime = new Date();
 
-        // Find attendance record by I
+        // Find attendance record by 
         const attendanceRecord = await Attendance.findById(attendanceId);
 
         if (!attendanceRecord) {
