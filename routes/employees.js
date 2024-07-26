@@ -117,7 +117,7 @@ router.get("/employee-details/:id", async (req, res) => {
 });
 
 
-////////
+//////
 router.put('/employees/:id',isAdmin, async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
