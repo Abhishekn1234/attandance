@@ -115,7 +115,7 @@ router.get("/employee-details/:id", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-//////////////////
+////////////////////
 router.put('/employees/:id',isAdmin, async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
